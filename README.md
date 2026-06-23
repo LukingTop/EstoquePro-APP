@@ -26,14 +26,20 @@ Este é o aplicativo móvel do sistema **EstoquePro**, desenhado para ser utiliz
 
 git clone [https://github.com/LukingTop/EstoquePro-APP]
 
-cd estoquepro-mobile
+# Instale as dependências:
 
 npm install
+
+# Configure as variáveis de ambiente:
 
 cp .env.example .env
 
 # Certifique-se de que a variável comece com EXPO_PUBLIC_API_URL=http://...
 
+# Inicie o servidor de desenvolvimento:
+
 npx expo start
+
+# (Opcional) Gerar build para Android na nuvem:
 
 eas build -p android --profile preview
