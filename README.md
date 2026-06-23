@@ -1,7 +1,7 @@
 
 # 📱 EstoquePro - Mobile App
 
-Este é o aplicativo móvel do sistema **EstoquePro**, desenhado para ser utilizado por operadores de estoque. O app permite visualizar missões, realizar contagens através de bipagem de itens e sincronizar os dados em tempo real com o [https://github.com/LukingTop/EstoquePro-API].
+Este é o aplicativo móvel do sistema **EstoquePro**, desenhado para ser utilizado por operadores de estoque. O app permite visualizar missões, realizar contagens através de bipagem de itens e sincronizar os dados em tempo real com o [API do EstoquePro](https://github.com/LukingTop/EstoquePro-API).
 
 # 🚀 Tecnologias Utilizadas
 
