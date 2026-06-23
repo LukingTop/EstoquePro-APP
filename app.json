@@ -46,7 +46,13 @@
       "expo-sqlite",
       "expo-secure-store",
       "expo-updates",
-      "@sentry/react-native/expo"
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "estoquepro",
+          "project": "estoquepro-app"
+        }
+      ]
     ],
     "updates": {
       "url": "https://u.expo.dev/dfb44e5f-b29b-4d22-a11b-9bbc7eeed990",
