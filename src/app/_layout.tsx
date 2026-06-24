@@ -32,7 +32,6 @@ export default function Layout() {
         <TouchCapture onTouch={handleTouch}>
           <Stack>
             <Stack.Screen name="login" options={{ headerShown: false }} />
-            <Stack.Screen name="register" options={{ headerShown: false }} />
             <Stack.Screen name="index" options={{ title: "Nova Contagem" }} />
             <Stack.Screen name="lista" options={{ title: "Histórico Diário" }} />
             <Stack.Screen name="missoes" options={{ title: "Missões de Recontagem" }} />
