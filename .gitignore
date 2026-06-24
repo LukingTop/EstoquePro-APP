@@ -43,3 +43,11 @@ yarn-error.*
 *.apk
 
 *.aab
+.idea/deviceManager.xml
+.idea/estoque-app.iml
+.idea/markdown.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/caches/deviceStreaming.xml
+.idea/.gitignore

@@ -14,13 +14,19 @@
       "android": {
         "buildType": "apk"
       },
-      "channel": "preview"
+      "channel": "preview",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://192.168.0.106:8000"
+      }
     },
     "production": {
       "autoIncrement": true,
       "channel": "production",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.estoquepro.com.br"
       }
     }
   },

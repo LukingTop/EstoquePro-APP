@@ -18,6 +18,20 @@ Este é o aplicativo móvel do sistema **EstoquePro**, desenhado para ser utiliz
 * **Tratamento de Fila de Requisições:** Interceptors mantêm requisições pausadas em caso de expiração de token e disparam novamente de forma invisível após a renovação.
 * **Interface Dinâmica:** Tela focada na produtividade do operador (leitura de itens e missões diárias).
 
+# 📋 Pré-requisitos e Configuração do Ambiente
+
+Antes de rodar o projeto, você precisará das ferramentas básicas de desenvolvimento instaladas:
+
+* **Node.js** (versão LTS recomendada).
+* **Android Studio** (necessário apenas se quiser testar o aplicativo pelo computador).
+
+**Como configurar o Emulador no Android Studio:**
+1. Baixe e instale o [Android Studio](https://developer.android.com/studio).
+2. Na tela inicial do programa, clique em **More Actions** e selecione **Virtual Device Manager**.
+3. Clique em **Create Virtual Device**, escolha um modelo de celular (ex: *Small Phone* ou *Nexus*) e avance.
+4. Baixe uma imagem do sistema (recomendado: Android 11 / API 30) e finalize.
+5. Inicie o emulador pelo botão de "Play" para que ele fique com a tela aberta antes de rodar os comandos abaixo.
+
 # 🛠️ Como rodar o projeto localmente
 
 **1. Clone este repositório:**
