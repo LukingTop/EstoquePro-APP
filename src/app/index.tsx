@@ -22,7 +22,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import api from '../services/api';
 import { getEnderecosOffline, cacheEnderecos } from '../services/offlineStorage';
 
-import { Audio } from 'expo-av';
 import * as Haptics from 'expo-haptics';
 
 export default function ContagemScreen() {
@@ -67,17 +66,13 @@ export default function ContagemScreen() {
   const [ruaSelecionada, setRuaSelecionada] = useState('');
   const [carregandoRota, setCarregandoRota] = useState(false);
 
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-
   const rotaAtiva = enderecosRota.length > 0 && currentIndex < enderecosRota.length;
   const enderecoAtualObj = rotaAtiva ? enderecosRota[currentIndex] : null;
   
-
   const enderecoAtual: string | null = isRecontagem 
     ? enderecoTrava 
     : (enderecoAtualObj ? String(enderecoAtualObj.codigo) : enderecoRepetir);
 
-  // Bloqueia e preenche os dados se for uma Missão de Recontagem
   useEffect(() => {
     if (isRecontagem && produtoTrava) {
       setCodigo(produtoTrava);
@@ -203,7 +198,6 @@ export default function ContagemScreen() {
     return;
   }
 
-  
   const cache = await AsyncStorage.getItem('dicionarioProdutos');
   if (cache) {
     const produtosOffline = JSON.parse(cache);
@@ -214,21 +208,16 @@ export default function ContagemScreen() {
     }
   }
 
-
   const produtoEncontrado = listaProdutos.find((p) => String(p.codigo) === text.trim());
   setDescricao(produtoEncontrado ? produtoEncontrado.descricao : '');
 };
+
   const reproduzirFeedbackDeLeitura = async () => {
     try {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        require('../assets/beep.mp3')
-      );
-      setSound(newSound);
-      await newSound.playAsync();
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
-      console.log('Erro ao reproduzir o som de bipe:', error);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+      console.log('Erro ao reproduzir a vibração:', error);
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     }
   };
 
@@ -259,7 +248,6 @@ export default function ContagemScreen() {
     try {
       let dados: any[] | null = null;
 
-      // 1. Tenta carregar do cache local (offline)
       try {
         dados = await getEnderecosOffline(ruaCodigo);
         if (dados && dados.length > 0) {
@@ -269,7 +257,6 @@ export default function ContagemScreen() {
         console.log('Cache offline indisponível, tentando API...');
       }
 
-      // 2. Se não encontrou localmente, busca da API e salva em cache
       if (!dados || dados.length === 0) {
         try {
           const token = await SecureStore.getItemAsync('userToken');
@@ -278,7 +265,6 @@ export default function ContagemScreen() {
             params: { rua_codigo: ruaCodigo },
           });
           dados = response.data.results || response.data;
-          // Salva no cache para uso offline 
           await cacheEnderecos(ruaCodigo);
         } catch (apiError: any) {
           if (apiError.response?.status === 401) {
@@ -314,7 +300,6 @@ export default function ContagemScreen() {
     setCurrentIndex(index);
     fecharModalRua();
     limparFormularioProduto();
-    // Garante que os endereços da rua selecionada fiquem em cache para uso offline 
     cacheEnderecos(ruaSelecionada);
   };
 
