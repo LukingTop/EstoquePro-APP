@@ -52,6 +52,14 @@
           "organization": "estoquepro",
           "project": "estoquepro-app"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
       ]
     ],
     "updates": {
