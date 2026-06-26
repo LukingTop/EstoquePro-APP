@@ -1,7 +1,6 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-
 let apiUrl = process.env.EXPO_PUBLIC_API_URL || '';
 if (apiUrl && !apiUrl.endsWith('/')) {
   apiUrl += '/';
@@ -9,7 +8,9 @@ if (apiUrl && !apiUrl.endsWith('/')) {
 
 const api = axios.create({
   baseURL: apiUrl,
+  timeout: 8000,   
 });
+
 
 api.interceptors.request.use(async (config) => {
   
@@ -23,6 +24,7 @@ api.interceptors.request.use(async (config) => {
   }
   return config;
 });
+
 
 let isRefreshing = false;
 let failedQueue: Array<{
@@ -46,6 +48,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    
     if (
       originalRequest.url?.includes('token/') ||
       originalRequest.url?.includes('token/refresh/')
@@ -80,7 +83,6 @@ api.interceptors.response.use(
           return Promise.reject(error);
         }
 
-       
         const { data } = await axios.post(
           `${apiUrl}token/refresh/`,
           { refresh: refreshToken }
