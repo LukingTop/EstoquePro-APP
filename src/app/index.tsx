@@ -9,8 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Keyboard,               
-  KeyboardAvoidingView,
+  Keyboard,
   Modal,
   Platform,
   StyleSheet,
@@ -26,7 +25,7 @@ import { getEnderecosOffline, cacheEnderecos } from '../services/offlineStorage'
 import * as Haptics from 'expo-haptics';
 
 export default function ContagemScreen() {
-  
+
   const params = useLocalSearchParams();
   const isRecontagem = params.is_recontagem === 'true';
   const tarefaId = params.tarefa_id;
@@ -44,7 +43,7 @@ export default function ContagemScreen() {
 
   const [preenchidoDoHistorico, setPreenchidoDoHistorico] = useState(false);
   const [enderecoRepetir, setEnderecoRepetir] = useState<string | null>(null);
-  
+
   const [operadorLogado, setOperadorLogado] = useState('');
 
   const [listaProdutos, setListaProdutos] = useState<any[]>([]);
@@ -55,7 +54,7 @@ export default function ContagemScreen() {
   const [modalRuasVisivel, setModalRuasVisivel] = useState(false);
   const [stepModalRota, setStepModalRota] = useState<'RUA' | 'ENDERECO'>('RUA');
   const [buscaRua, setBuscaRua] = useState('');
-  
+
   const [modalProdutoVisivel, setModalProdutoVisivel] = useState(false);
   const [buscaProduto, setBuscaProduto] = useState('');
 
@@ -69,9 +68,9 @@ export default function ContagemScreen() {
 
   const rotaAtiva = enderecosRota.length > 0 && currentIndex < enderecosRota.length;
   const enderecoAtualObj = rotaAtiva ? enderecosRota[currentIndex] : null;
-  
-  const enderecoAtual: string | null = isRecontagem 
-    ? enderecoTrava 
+
+  const enderecoAtual: string | null = isRecontagem
+    ? enderecoTrava
     : (enderecoAtualObj ? String(enderecoAtualObj.codigo) : enderecoRepetir);
 
   useEffect(() => {
@@ -79,7 +78,7 @@ export default function ContagemScreen() {
       setCodigo(produtoTrava);
       setPreenchidoDoHistorico(true);
       setTimeout(() => palletsRef.current?.focus(), 600);
-      
+
       if (params.descricao_trava) {
         setDescricao(params.descricao_trava as string);
       } else if (listaProdutos.length > 0) {
@@ -88,7 +87,7 @@ export default function ContagemScreen() {
       }
     }
   }, [isRecontagem, produtoTrava, params.descricao_trava, listaProdutos]);
-  
+
   useFocusEffect(
     useCallback(() => {
       const verificarPendingRepeat = async () => {
@@ -99,14 +98,14 @@ export default function ContagemScreen() {
 
         try {
           const data = JSON.parse(pendingJson);
-          
+
           setEnderecoRepetir(data.endereco ?? '');
           setCodigo(data.codigo ?? '');
           setDescricao(data.descricao ?? '');
           setPallets('');
           setObs('');
           setPreenchidoDoHistorico(true);
-          
+
           setTimeout(() => palletsRef.current?.focus(), 400);
         } catch {
         } finally {
@@ -131,12 +130,12 @@ export default function ContagemScreen() {
     const iniciarTela = async () => {
       const token = await SecureStore.getItemAsync('userToken');
       const user = await SecureStore.getItemAsync('loggedUser');
-      
+
       if (!token) {
         router.replace('/login');
         return;
       }
-      
+
       if (user) {
         setOperadorLogado(user);
       }
@@ -175,43 +174,43 @@ export default function ContagemScreen() {
   }, []);
 
   const handleLogout = () => {
-  Alert.alert('Desconectar', 'Tem certeza que deseja sair da conta atual?', [
-    { text: 'Cancelar', style: 'cancel' },
-    { 
-      text: 'Sair', 
-      style: 'destructive', 
-      onPress: async () => {
-        await SecureStore.deleteItemAsync('userToken');
-        await SecureStore.deleteItemAsync('refreshToken');
-        await SecureStore.deleteItemAsync('loggedUser');
-        await SecureStore.deleteItemAsync('savedUsername');   
-        await SecureStore.deleteItemAsync('savedPassword');   
-        router.replace('/login');
+    Alert.alert('Desconectar', 'Tem certeza que deseja sair da conta atual?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Sair',
+        style: 'destructive',
+        onPress: async () => {
+          await SecureStore.deleteItemAsync('userToken');
+          await SecureStore.deleteItemAsync('refreshToken');
+          await SecureStore.deleteItemAsync('loggedUser');
+          await SecureStore.deleteItemAsync('savedUsername');
+          await SecureStore.deleteItemAsync('savedPassword');
+          router.replace('/login');
+        }
       }
-    }
-  ]);
-};
+    ]);
+  };
 
   const handleCodigoChange = async (text: string) => {
-  setCodigo(text);
-  if (!text.trim()) {
-    setDescricao('');
-    return;
-  }
-
-  const cache = await AsyncStorage.getItem('dicionarioProdutos');
-  if (cache) {
-    const produtosOffline = JSON.parse(cache);
-    const encontrado = produtosOffline.find((p: any) => p.codigo === text.trim());
-    if (encontrado) {
-      setDescricao(encontrado.descricao);
+    setCodigo(text);
+    if (!text.trim()) {
+      setDescricao('');
       return;
     }
-  }
 
-  const produtoEncontrado = listaProdutos.find((p) => String(p.codigo) === text.trim());
-  setDescricao(produtoEncontrado ? produtoEncontrado.descricao : '');
-};
+    const cache = await AsyncStorage.getItem('dicionarioProdutos');
+    if (cache) {
+      const produtosOffline = JSON.parse(cache);
+      const encontrado = produtosOffline.find((p: any) => p.codigo === text.trim());
+      if (encontrado) {
+        setDescricao(encontrado.descricao);
+        return;
+      }
+    }
+
+    const produtoEncontrado = listaProdutos.find((p) => String(p.codigo) === text.trim());
+    setDescricao(produtoEncontrado ? produtoEncontrado.descricao : '');
+  };
 
   const reproduzirFeedbackDeLeitura = async () => {
     try {
@@ -225,7 +224,7 @@ export default function ContagemScreen() {
   const lerCodigoDeBarras = async ({ data }: { data: string }) => {
     if (escaneado) return;
     setEscaneado(true);
-    
+
     await reproduzirFeedbackDeLeitura();
 
     handleCodigoChange(data);
@@ -356,7 +355,7 @@ export default function ContagemScreen() {
 
     Alert.alert(
       'Cancelar?',
-      rotaAtiva 
+      rotaAtiva
         ? `Você está na rua ${ruaSelecionada}, passo ${currentIndex + 1} de ${enderecosRota.length}.\nDeseja sair da rota?`
         : 'Deseja sair do Modo Repetir?',
       [
@@ -395,7 +394,7 @@ export default function ContagemScreen() {
 
     try {
       const token = await SecureStore.getItemAsync('userToken');
-      
+
       await api.post('/contagens/', payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -417,7 +416,7 @@ export default function ContagemScreen() {
 
       setListaContagens(prev => [{ ...payload, data_hora: new Date().toISOString() }, ...prev]);
       avancarRota();
-      Keyboard.dismiss();   
+      Keyboard.dismiss();
     } catch (error: any) {
       if (!error.response && !isRecontagem) {
         const filaAtual = await obterFilaOffline();
@@ -436,7 +435,7 @@ export default function ContagemScreen() {
       }
     } finally {
       setSalvando(false);
-      Keyboard.dismiss();  
+      Keyboard.dismiss();
     }
   };
 
@@ -515,7 +514,7 @@ export default function ContagemScreen() {
         const ts = obterTimestamp(c);
         return ts ? new Date(ts) >= duasHorasAtras : false;
       })
-      .map((c) => String(c.endereco || c.rua)) 
+      .map((c) => String(c.endereco || c.rua))
   );
 
   const progressoPct = enderecosRota.length > 0
@@ -641,7 +640,7 @@ export default function ContagemScreen() {
             <Text style={styles.label}>
               <Ionicons name="barcode-outline" size={16} /> Produto
             </Text>
-            
+
             {isRecontagem ? (
               <View style={[styles.enderecoTravado, { borderColor: '#b91c1c', backgroundColor: '#fef2f2' }]}>
                 <Ionicons name="lock-closed" size={18} color="#b91c1c" />
@@ -654,7 +653,10 @@ export default function ContagemScreen() {
               <View style={styles.linhaInputBtn}>
                 <TouchableOpacity
                   style={[styles.input, { flex: 1, marginBottom: 0, justifyContent: 'center' }]}
-                  onPress={() => setModalProdutoVisivel(true)}
+                  onPress={() => {
+                    Keyboard.dismiss();                   
+                    setModalProdutoVisivel(true);
+                  }}
                 >
                   <Text style={{ color: codigo ? '#1e293b' : '#94a3b8', fontSize: 16 }} numberOfLines={1}>
                     {codigo ? `${codigo} - ${descricao}` : 'Selecione ou busque o Produto'}
@@ -698,13 +700,13 @@ export default function ContagemScreen() {
             />
           </View>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              styles.btnPrincipal, 
+              styles.btnPrincipal,
               salvando && { opacity: 0.7 },
               isRecontagem && { backgroundColor: '#b91c1c' }
-            ]} 
-            onPress={salvarContagem} 
+            ]}
+            onPress={salvarContagem}
             disabled={salvando}
           >
             {salvando ? (
@@ -735,9 +737,9 @@ export default function ContagemScreen() {
             <Text style={styles.btnTextoSecundario}>VER HISTÓRICO</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.btnSecundario, { borderColor: '#b91c1c', marginTop: 0 }]} 
-            onPress={() => router.push('/missoes')} 
+          <TouchableOpacity
+            style={[styles.btnSecundario, { borderColor: '#b91c1c', marginTop: 0 }]}
+            onPress={() => router.push('/missoes')}
             disabled={salvando}
           >
             <Ionicons name="shield-checkmark" size={20} color="#b91c1c" />
@@ -766,7 +768,6 @@ export default function ContagemScreen() {
             </Text>
           </TouchableOpacity>
 
-          
           <TouchableOpacity
             style={[styles.btnSecundario, { borderColor: '#f59e0b', marginTop: 0 }]}
             onPress={() => router.push('/ranking')}
@@ -789,8 +790,9 @@ export default function ContagemScreen() {
         </View>
       </Modal>
 
+      
       <Modal visible={modalRuasVisivel} animationType="fade" transparent={true}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+        <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               {stepModalRota === 'ENDERECO' && (
@@ -870,11 +872,12 @@ export default function ContagemScreen() {
               </>
             )}
           </View>
-        </KeyboardAvoidingView>
+        </View>
       </Modal>
 
+      
       <Modal visible={modalProdutoVisivel} animationType="fade" transparent={true}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+        <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.tituloSecao}>Selecionar Produto</Text>
@@ -891,7 +894,7 @@ export default function ContagemScreen() {
             <FlatList
               data={produtosFiltrados}
               keyExtractor={(item) => String(item.codigo)}
-              keyboardShouldPersistTaps="handled"   
+              keyboardShouldPersistTaps="handled"
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.itemLista}
@@ -913,7 +916,7 @@ export default function ContagemScreen() {
               ListEmptyComponent={<Text style={styles.textoVazio}>Nenhum produto encontrado.</Text>}
             />
           </View>
-        </KeyboardAvoidingView>
+        </View>
       </Modal>
     </KeyboardAwareScrollView>
   );
