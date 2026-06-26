@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Keyboard,               
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -416,6 +417,7 @@ export default function ContagemScreen() {
 
       setListaContagens(prev => [{ ...payload, data_hora: new Date().toISOString() }, ...prev]);
       avancarRota();
+      Keyboard.dismiss();   
     } catch (error: any) {
       if (!error.response && !isRecontagem) {
         const filaAtual = await obterFilaOffline();
@@ -434,6 +436,7 @@ export default function ContagemScreen() {
       }
     } finally {
       setSalvando(false);
+      Keyboard.dismiss();  
     }
   };
 
@@ -888,6 +891,7 @@ export default function ContagemScreen() {
             <FlatList
               data={produtosFiltrados}
               keyExtractor={(item) => String(item.codigo)}
+              keyboardShouldPersistTaps="handled"   
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.itemLista}

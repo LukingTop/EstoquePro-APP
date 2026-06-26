@@ -1,11 +1,22 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
+
+let apiUrl = process.env.EXPO_PUBLIC_API_URL || '';
+if (apiUrl && !apiUrl.endsWith('/')) {
+  apiUrl += '/';
+}
+
 const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
+  baseURL: apiUrl,
 });
 
 api.interceptors.request.use(async (config) => {
+  
+  if (config.url && config.url.startsWith('/')) {
+    config.url = config.url.substring(1);
+  }
+
   const token = await SecureStore.getItemAsync('userToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -36,8 +47,8 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     if (
-      originalRequest.url?.includes('/token/') ||
-      originalRequest.url?.includes('/token/refresh/')
+      originalRequest.url?.includes('token/') ||
+      originalRequest.url?.includes('token/refresh/')
     ) {
       return Promise.reject(error);
     }
@@ -69,8 +80,9 @@ api.interceptors.response.use(
           return Promise.reject(error);
         }
 
+       
         const { data } = await axios.post(
-          `${api.defaults.baseURL}/token/refresh/`,
+          `${apiUrl}token/refresh/`,
           { refresh: refreshToken }
         );
 

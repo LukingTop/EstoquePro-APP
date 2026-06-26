@@ -16,7 +16,7 @@
       },
       "channel": "preview",
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://192.168.0.106:8000"
+        "EXPO_PUBLIC_API_URL": "http://192.168.0.106:8000/api/v1"
       }
     },
     "production": {
@@ -26,7 +26,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.estoquepro.com.br"
+        "EXPO_PUBLIC_API_URL": "http://192.168.0.106:8000/api/v1"
       }
     }
   },
