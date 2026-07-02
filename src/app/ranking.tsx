@@ -1,8 +1,17 @@
+// app/ranking.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import api from '../services/api';
-import { cores } from '../styles/GlobalStyles';
+
+const COR_PRIMARIA = '#4c1d95';
+const COR_FUNDO = '#F8FAFC';
+const COR_CARD = '#FFFFFF';
+const COR_BORDA = '#E2E8F0';
+const COR_TEXTO_ESCURO = '#0F172A';
+const COR_TEXTO_MEDIO = '#64748B';
 
 export default function RankingScreen() {
   const [ranking, setRanking] = useState<any[]>([]);
@@ -16,10 +25,21 @@ export default function RankingScreen() {
 
   const carregarRanking = async () => {
     try {
+      const userLogado = await SecureStore.getItemAsync('loggedUser');
+      setOperadorLogado(userLogado || '');
+
       const response = await api.get('/ranking-diario/');
-      setRanking(response.data.ranking);
-      setOperadorLogado(response.data.operador_logado);
+      let lista = response.data.ranking || [];
       setMetaDiaria(response.data.meta_diaria || 150);
+
+      // Garante que o operador logado apareça, mesmo com 0 pallets
+      if (userLogado && !lista.find((item: any) => item.operador__username === userLogado)) {
+        lista.push({
+          operador__username: userLogado,
+          total_pallets: 0,
+        });
+      }
+      setRanking(lista);
     } catch (error) {
       console.error('Erro ao carregar ranking:', error);
     } finally {
@@ -56,7 +76,7 @@ export default function RankingScreen() {
   if (loading) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color={cores.primaria} />
+        <ActivityIndicator size="large" color={COR_PRIMARIA} />
       </View>
     );
   }
@@ -64,42 +84,62 @@ export default function RankingScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Ionicons name="trophy-outline" size={40} color="#f59e0b" />
-        <Text style={styles.titulo}>Ranking do Dia</Text>
-        <Text style={styles.subtitulo}>Meta: {metaDiaria} pallets</Text>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#FFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Ranking do Dia</Text>
+        <View style={{ width: 24 }} />
       </View>
+
+      <View style={styles.metaContainer}>
+        <Ionicons name="trophy-outline" size={40} color="#f59e0b" />
+        <Text style={styles.metaTexto}>Meta: {metaDiaria} pallets</Text>
+      </View>
+
       <FlatList
         data={ranking}
         keyExtractor={(item) => item.operador__username}
         renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: cores.fundo, padding: 20 },
-  header: { alignItems: 'center', marginBottom: 20, marginTop: 40 },
-  titulo: { fontSize: 24, fontWeight: 'bold', color: cores.texto, marginTop: 10 },
-  subtitulo: { fontSize: 14, color: cores.textoMutado, marginTop: 5 },
+  container: { flex: 1, backgroundColor: COR_FUNDO },
+  header: {
+    backgroundColor: COR_PRIMARIA,
+    paddingTop: 52,
+    paddingBottom: 18,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' },
+  metaContainer: { alignItems: 'center', marginBottom: 20 },
+  metaTexto: { fontSize: 14, color: COR_TEXTO_MEDIO, marginTop: 5 },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: cores.cartao,
+    backgroundColor: COR_CARD,
     borderRadius: 12,
     padding: 16,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: COR_BORDA,
   },
   itemDestaque: {
     borderWidth: 2,
-    borderColor: cores.primaria,
-    backgroundColor: '#eff6ff',
+    borderColor: COR_PRIMARIA,
+    backgroundColor: '#EDE9FE',
   },
   posicaoContainer: { marginRight: 12 },
-  posicao: { fontSize: 18, fontWeight: 'bold', color: cores.textoMutado },
-  nome: { fontSize: 16, fontWeight: '600', color: cores.texto },
+  posicao: { fontSize: 18, fontWeight: 'bold', color: COR_TEXTO_MEDIO },
+  nome: { fontSize: 16, fontWeight: '600', color: COR_TEXTO_ESCURO },
   palletsContainer: { flexDirection: 'row', alignItems: 'center' },
-  pallets: { fontSize: 18, fontWeight: 'bold', color: cores.primaria },
-  palletsLabel: { fontSize: 12, color: cores.textoMutado, marginLeft: 4 },
+  pallets: { fontSize: 18, fontWeight: 'bold', color: COR_PRIMARIA },
+  palletsLabel: { fontSize: 12, color: COR_TEXTO_MEDIO, marginLeft: 4 },
 });

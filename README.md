@@ -1,59 +1,105 @@
+# 📱 CargoPolo – Inventário Rotativo de Estoque
 
-# 📱 EstoquePro - Mobile App
-
-Este é o aplicativo móvel do sistema **EstoquePro**, desenhado para ser utilizado por operadores de estoque. O app permite visualizar missões, realizar contagens através de bipagem de itens e sincronizar os dados em tempo real com o [API do EstoquePro](https://github.com/LukingTop/EstoquePro-API).
+App móvel do sistema **CargoPolo**, desenvolvido para operadores de estoque realizarem contagens sequenciais, registrarem avarias, lançamentos livres (stage) e acompanharem o progresso dos ciclos de inventário. O aplicativo se comunica em tempo real com o [Backend Django](https://github.com/LukingTop/EstoquePro-Backend).
 
 # 🚀 Tecnologias Utilizadas
 
-* **React Native & Expo:** Desenvolvimento mobile multiplataforma.
-* **TypeScript:** Tipagem estática para maior segurança do código.
-* **Axios:** Cliente HTTP com interceptors configurados para renovação automática de Token JWT.
-* **Expo SecureStore:** Armazenamento criptografado dos tokens de sessão do usuário.
-* **Sentry (@sentry/react-native):** Rastreamento de falhas e monitoramento de estabilidade.
-* **EAS Build:** Pipeline de compilação na nuvem para geração de `.apk`.
+* **React Native & Expo (Expo Router):** Desenvolvimento mobile com navegação baseada em arquivos.
+* **TypeScript:** Tipagem estática para segurança e produtividade.
+* **Axios:** Cliente HTTP com interceptors para renovação automática de Token JWT.
+* **Expo SecureStore & AsyncStorage:** Armazenamento criptografado de credenciais e cache offline.
+* **Sentry (@sentry/react-native):** Monitoramento de erros e performance.
+* **Gradle (build local):** Geração de APK diretamente na máquina, sem depender do EAS Build.
 
-# ⚙️ Funcionalidades
+# ⚙️ Funcionalidades Principais
 
-* **Login Persistente:** Fluxo completo de autenticação com armazenamento seguro e refresh token silencioso.
-* **Tratamento de Fila de Requisições:** Interceptors mantêm requisições pausadas em caso de expiração de token e disparam novamente de forma invisível após a renovação.
-* **Interface Dinâmica:** Tela focada na produtividade do operador (leitura de itens e missões diárias).
+* **Login persistente:** autenticação JWT com renovação silenciosa de token e opção “lembrar acesso”.
+* **Home (Missões de Recontagem):** lista de tarefas de recontagem pendentes, com opção de assumir e iniciar contagem.
+* **Ciclos de Contagem:** visualização das sessões de inventário criadas pelo gestor; ao selecionar, o operador inicia a contagem sequencial das ruas atribuídas.
+* **Contagem Sequencial:** progresso da rota, leitura de produto (modal de busca ou digitação), registro de pallets e unidades, observações, navegação entre endereços (anterior/próximo) e confirmação de contagem (online e offline).
+* **Registro de Avaria:** conversor de unidades com cálculo automático (unidade/pack/pallet) e envio para o backend.
+* **Lançamento Livre (Stage):** contagem rápida em qualquer endereço, independente de ciclo.
+* **Meu Progresso:** painel individual com total de pallets do dia, missões concluídas e últimos itens contados.
+* **Ranking Diário:** classificação dos operadores com meta de pallets e destaque para o usuário logado.
+* **Detalhes do Ciclo:** acompanhamento visual com percentual de conclusão, lista de itens e gráfico de rosca.
+* **Histórico de Contagens:** registro detalhado por item, com opção de solicitar recontagem.
+* **Relatórios:** hub central que direciona para Progresso, Ranking, Avaria e Stage.
+* **Sincronização offline:** contagens pendentes são salvas localmente e enviadas quando a internet retorna.
 
-# 📋 Pré-requisitos e Configuração do Ambiente
+# 📋 Pré‑requisitos
 
-Antes de rodar o projeto, você precisará das ferramentas básicas de desenvolvimento instaladas:
+* **Node.js** (versão LTS recomendada) e **npm** instalados.
+* **Android Studio** (para emulador) ou um **dispositivo Android físico**.
+* **JDK 17** (recomendado: Eclipse Adoptium Temurin 17).
+* **Android SDK** configurado (caminho padrão: `C:\Users\<seu_usuario>\AppData\Local\Android\Sdk`).
+* Variável de ambiente `ANDROID_HOME` (opcional, mas recomendada).
 
-* **Node.js** (versão LTS recomendada).
-* **Android Studio** (necessário apenas se quiser testar o aplicativo pelo computador).
+# 🔧 Configuração do Ambiente
 
-**Como configurar o Emulador no Android Studio:**
-1. Baixe e instale o [Android Studio](https://developer.android.com/studio).
-2. Na tela inicial do programa, clique em **More Actions** e selecione **Virtual Device Manager**.
-3. Clique em **Create Virtual Device**, escolha um modelo de celular (ex: *Small Phone* ou *Nexus*) e avance.
-4. Baixe uma imagem do sistema (recomendado: Android 11 / API 30) e finalize.
-5. Inicie o emulador pelo botão de "Play" para que ele fique com a tela aberta antes de rodar os comandos abaixo.
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/LukingTop/EstoquePro-APP.git
+   cd estoque-app
 
-# 🛠️ Como rodar o projeto localmente
+2. **Instale as dependências:**
+bash
 
-**1. Clone este repositório:**
+npm install   
 
-```bash
+3. **Configure a URL do backend:**
 
-git clone [https://github.com/LukingTop/EstoquePro-APP]
+Crie um arquivo .env na raiz do projeto com o seguinte conteúdo:
 
-# Instale as dependências:
+text
 
-npm install
+EXPO_PUBLIC_API_URL=http://192.168.X.X:8000
 
-# Configure as variáveis de ambiente:
+Substitua 192.168.X.X pelo IP da máquina onde o backend Django está rodando.
+(Para descobrir seu IP local no Windows, use ipconfig e procure por Endereço IPv4.)
 
-cp .env.example .env
+4. **Sincronize os assets nativos**
 
-# Certifique-se de que a variável comece com EXPO_PUBLIC_API_URL=http://...
+bash
+npx expo prebuild --platform android
 
-# Inicie o servidor de desenvolvimento:
+🛠️ Rodando o App em Desenvolvimento
+Inicie o servidor Metro:
 
+bash
 npx expo start
+Escaneie o QR Code com o app Expo Go no seu celular (Android/iOS) ou pressione a para abrir no emulador Android.
 
-# (Opcional) Gerar build para Android na nuvem:
+O app será carregado com hot‑reload ativado.
 
-eas build -p android --profile preview
+Nota: Certifique‑se de que o backend esteja acessível no mesmo IP configurado no .env e que a porta 8000 esteja liberada no firewall.
+
+📦 Gerando o APK (Build Local)
+Quando precisar instalar o app em um dispositivo sem Expo Go, gere o APK de produção localmente:
+
+bash
+# 1. Exporte o bundle JavaScript limpo
+npx expo export --platform android --clear
+
+# 2. Copie o bundle e os assets para a pasta do Android
+xcopy /E /Y dist\* android\app\src\main\assets\
+
+# 3. Acesse a pasta android
+cd android
+
+# 4. Execute o Gradle para gerar o APK de release
+.\gradlew assembleRelease
+O APK será gerado em:
+
+text
+android\app\build\outputs\apk\release\app-release.apk
+Transfira o arquivo para o celular e instale‑o.
+
+Dica: Se o Gradle apresentar erro de memória ou metadados corrompidos, limpe o cache:
+
+bash
+taskkill /f /im java.exe
+Remove-Item -Path "$env:USERPROFILE\.gradle\caches\8.13\transforms" -Recurse -Force
+
+📄 Licença
+Este projeto é de uso interno da CargoPolo – Inventário Rotativo de Estoque. Todos os direitos reservados.
+

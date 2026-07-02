@@ -13,14 +13,12 @@ export default function Layout() {
   usePushNotifications();
   useAppUpdates();
 
-  // Obtém a função que reseta o timer de inatividade
   const resetInactivity = useInactivityLogout();
 
   const handleTouch = useCallback(() => {
     resetInactivity();
   }, [resetInactivity]);
 
-  // Ativa a sincronização automática em segundo plano
   useEffect(() => {
     registerBackgroundSync();
   }, []);
@@ -30,11 +28,7 @@ export default function Layout() {
       <ErrorBoundary>
         <MonitoramentoBateria />
         <TouchCapture onTouch={handleTouch}>
-          <Stack>
-            <Stack.Screen name="login" options={{ headerShown: false }} />
-            <Stack.Screen name="index" options={{ title: "Nova Contagem" }} />
-            <Stack.Screen name="lista" options={{ title: "Histórico Diário" }} />
-            <Stack.Screen name="missoes" options={{ title: "Missões de Recontagem" }} />
+          <Stack screenOptions={{ headerShown: false }}>
           </Stack>
         </TouchCapture>
       </ErrorBoundary>

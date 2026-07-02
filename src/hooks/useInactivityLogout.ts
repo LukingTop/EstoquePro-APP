@@ -3,7 +3,7 @@ import { AppState, AppStateStatus } from 'react-native';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
-const TIMEOUT_MINUTOS = 15;
+const TIMEOUT_MINUTOS = 30;
 const TIMEOUT_MS = TIMEOUT_MINUTOS * 60 * 1000;
 
 export function useInactivityLogout(): () => void {

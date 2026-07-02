@@ -1,0 +1,83 @@
+export default {
+  expo: {
+    name: "CargoPolo",
+    slug: "estoque-app",
+    version: "1.0.0",
+    runtimeVersion: "1.0.0",
+    orientation: "portrait",
+    icon: "./assets/images/icon.png",
+    scheme: "estoqueapp",
+    userInterfaceStyle: "light",
+    jsEngine: "hermes",   
+    ios: {
+      icon: "./assets/expo.icon"
+    },
+    android: {
+      package: "com.lukingtop.estoqueapp",
+      versionCode: 1,
+      adaptiveIcon: {
+        backgroundColor: "#4c1d95",
+        foregroundImage: "./assets/images/android-icon-foreground.png",
+        backgroundImage: "./assets/images/android-icon-background.png",
+        monochromeImage: "./assets/images/android-icon-monochrome.png"
+      },
+      predictiveBackGestureEnabled: false,
+      softwareKeyboardLayoutMode: "pan",
+      permissions: [
+        "RECEIVE_BOOT_COMPLETED",
+        "FOREGROUND_SERVICE"
+      ]
+    },
+    web: {
+      output: "static",
+      favicon: "./assets/images/favicon.png"
+    },
+    plugins: [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          backgroundColor: "#4c1d95",
+          android: {
+            image: "./assets/images/splash-icon.png",
+            imageWidth: 76
+          }
+        }
+      ],
+      "expo-sqlite",
+      "expo-secure-store",
+      "expo-updates",
+      [
+        "@sentry/react-native/expo",
+        {
+          organization: "estoquepro",
+          project: "estoquepro-app"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          android: {
+            usesCleartextTraffic: true
+          }
+        }
+      ]
+    ],
+    updates: {
+      url: "https://u.expo.dev/dfb44e5f-b29b-4d22-a11b-9bbc7eeed990",
+      enabled: true,
+      checkAutomatically: "ON_LOAD",
+      fallbackToCacheTimeout: 0
+    },
+    experiments: {
+      typedRoutes: true,
+      reactCompiler: true
+    },
+    extra: {
+      router: {},
+      eas: {
+        projectId: "dfb44e5f-b29b-4d22-a11b-9bbc7eeed990"
+      }
+    }
+  }
+};
